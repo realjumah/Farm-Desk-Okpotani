@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f6b43">
+<title>FarmDesk</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="FarmDesk">
+<style>
+:root{--bg:#eef3ee;--card:#fff;--ink:#16241b;--mut:#5d6f63;--line:#d5dfd6;--pri:#1f6b43;--pri2:#e3f1e8;--acc:#e0a526;--bad:#b3392f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a14;--card:#16241b;--ink:#e8f0ea;--mut:#9bb0a1;--line:#27382d;--pri:#5fcf92;--pri2:#1c3427;--acc:#f0c050;--bad:#ff8a7d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a14;--card:#16241b;--ink:#e8f0ea;--mut:#9bb0a1;--line:#27382d;--pri:#5fcf92;--pri2:#1c3427;--acc:#f0c050;--bad:#ff8a7d;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;gap:10px;padding:14px 16px 6px;max-width:760px;margin:auto}
+header h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--pri);flex:1}
+header span{color:var(--mut);font-size:14px}
+#th{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:50%;width:36px;height:36px;font-size:16px}
+main{max-width:760px;margin:auto;padding:6px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{flex:1;border:0;background:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11px system-ui,sans-serif;padding:6px 0;border-radius:10px}
+nav button.on{color:var(--pri);background:var(--pri2)}
+h2{font-size:22px;margin:18px 0 6px;letter-spacing:-.3px}h3{font-size:17px;margin:0 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.mut{color:var(--mut);font-size:14px}.bad{color:var(--bad)}.ok{color:var(--pri)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0}
+.st{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.st b{display:block;font-size:24px;line-height:1.1;font-weight:800}.st small{color:var(--mut)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.row.tap{cursor:pointer}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:end}
+label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--mut);font-weight:600}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;min-height:44px;width:100%}
+textarea{min-height:90px;font-size:13px}
+.btn{background:var(--pri);color:var(--bg);border:0;border-radius:10px;padding:11px 16px;font:700 15px inherit;font-family:inherit;min-height:44px}
+.btn.alt{background:var(--pri2);color:var(--pri)}.btn.del{background:none;color:var(--bad);border:1px solid var(--line)}
+.link{background:none;border:0;color:var(--pri);font:600 15px inherit;font-family:inherit;padding:8px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600}.sc{overflow-x:auto}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0}.chips button{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:7px 13px;font:600 14px inherit;font-family:inherit}
+.chips button.on{background:var(--pri);color:var(--bg);border-color:var(--pri)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--pri2);color:var(--pri)}
+.tag.w{background:#f7e6b8;color:#6b4b00}.tag.b{background:#f6d5d1;color:#8c2a21}
+input[type=checkbox]{width:24px;min-height:24px;height:24px}
+details summary{font-weight:700;cursor:pointer;padding:4px 0}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+#toast.on{opacity:1}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style></head><body>
+<header><h1>FarmDesk</h1><span id="dt"></span><button id="ib" class="btn alt" hidden onclick="ip.prompt()">Install</button><button id="th" aria-label="Toggle dark mode" onclick="theme()">◐</button></header>
+<main id="main"></main><nav id="nav"></nav><div id="toast" role="status"></div>
+<script>
+const LS='farmdesk_v1';let S;try{S=JSON.parse(localStorage.getItem(LS))}catch(e){}
+S=Object.assign({batches:[],fields:[],ledger:[],prices:{},hatch:[]},S||{});
+const save=()=>{try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),g=id=>$('#'+id).value,esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10),dd=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5),
+addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)},
+fmt=n=>Number(n).toLocaleString(undefined,{maximumFractionDigits:1}),
+F=(id,l,t='text',v='',x='')=>`<label>${l}<input id="${id}" type="${t}" value="${esc(v)}" ${x}></label>`,
+SEL=(id,l,o,v,x='')=>`<label>${l}<select id="${id}" ${x}>${o.map(a=>`<option${a==v?' selected':''}>${esc(a)}</option>`).join('')}</select></label>`,
+st=(l,v)=>`<div class="st"><b>${v}</b><small>${l}</small></div>`,
+toast=m=>{const t=$('#toast');t.textContent=m;t.className='on';setTimeout(()=>t.className='',2200)};
+const IC={home:'<path d="M3 11l9-8 9 8v10H3z"/><path d="M9 21v-6h6v6"/>',stock:'<path d="M12 3c4 0 7 6 7 11a7 7 0 01-14 0c0-5 3-11 7-11z"/>',feed:'<path d="M3 11h18a9 9 0 01-18 0z"/><path d="M8 7l1-3M12 7V3M16 7l-1-3"/>',crops:'<path d="M12 21V8M12 8c-3 0-4-2-4-4 3 0 4 2 4 4zm0 0c3 0 4-2 4-4-3 0-4 2-4 4zm0 5c-3 0-4-2-4-4m4 4c3 0 4-2 4-4"/>',money:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6v1.5M12 16.5V18"/>',learn:'<path d="M4 4h7a2 2 0 012 2v14a2 2 0 00-2-2H4zM20 4h-7a2 2 0 00-2 2v14a2 2 0 012-2h7z"/>'};
+const ic=n=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+const TABS=[['home','Today'],['stock','Stock'],['feed','Feed'],['crops','Crops'],['money','Money'],['learn','Library']];
+let T='home',B=null,Q='',LC='All',FR='Broiler starter',FK=100,FN=100,FB='Broiler',CR='Maize',CA=1;
+
+/* ---------- Reference data (from the knowledge base PDF) ---------- */
+const SP={Broiler:{p:1,st:[[14,'Starter: crumbled, 22–23% CP'],[42,'Finisher: pelleted, 19–20% CP']],tg:'2.2–2.6 kg at 35–42 days, FCR 1.50–1.65'},
+Layer:{p:1,st:[[56,'Chick starter: 20% CP'],[119,'Grower: 16% CP'],[560,'Layer phase: 17.5% CP, 3.8% calcium']],tg:'1.25–1.40 kg at 17 wks; 300–320 eggs/yr'},
+Kuroiler:{p:1,st:[[84,'Starter crumb, then dual-purpose mash']],tg:'2.0–2.8 kg at 12 wks'},
+Pigs:{tg:'Market weight 90–110 kg'},Cattle:{tg:'First service at 15–18 months, min 250–280 kg'},'Goats/Sheep':{tg:'Kidding/lambing interval about 8 months'}};
+let VAC=[[1,"Marek's HVT + H120","Marek's disease, bronchitis","Subcutaneous or spray"],[7,"Newcastle Lasota + IB","Newcastle, bronchitis","Eye drop or drinking water"],[10,"Gumboro (IBD) intermediate","Infectious bursal disease","Drinking water + skimmed milk (day 10–12)"],[18,"Gumboro booster (IBD Plus)","Infectious bursal disease","Drinking water (day 18–20)"],[24,"Newcastle Lasota booster","Newcastle","Drinking water"],[42,"Fowl pox & fowl typhoid","Poxvirus, S. gallinarum","Wing-web prick / intramuscular (week 6)"],[56,"Fowl pox & fowl typhoid","Poxvirus, S. gallinarum","Wing-web prick / intramuscular (week 8)"],[112,"ND + IB + EDS killed oil","Newcastle, IB, egg drop","Intramuscular 0.5 ml (week 16, layers)",1]];
+const vacs=b=>VAC.filter(v=>b.type=='Layer'||(!v[4]&&(b.type=='Kuroiler'||v[0]<=24)));
+let ING=['Maize meal','Soybean meal (46% CP)','Fish meal / omena (60% CP)','Wheat bran / pollard','Limestone','Dicalcium phosphate','Premix, salt, lysine, methionine'];
+let REC={'Broiler starter':[52,32,5,6,1.5,1.8,1.7],'Broiler finisher':[58,26,3,8,1.5,1.8,1.7],'Layer starter':[54,28,4,9,1.5,1.8,1.7],'Layer production mash':[52,18,3,12,8,1.5,3.5]};
+let NEED=[['Broiler','Starter, day 1–14',.45,.5],['Broiler','Finisher, day 15–42',2.8,3.2],['Layer','Chick starter, to week 8',1.5,1.5],['Layer','Grower, week 9–17',4.8,4.8],['Layer','Layer phase, per day',.11,.115],['Kuroiler','Day 1–week 12',3.8,4.5]];
+let CROPS={Maize:{sp:'75 × 25 cm, 1 plant, 5 cm deep',s:[8,10,'kg'],y:[25,35,'bags (90 kg)'],f:[['Basal at planting','DAP 18:46:0 or NPK 23:23:0',50,0],['Top-dress 1: knee-high (V6)','CAN or urea',50,28],['Top-dress 2: early tasseling (optional)','CAN',25,56]]},
+Rice:{sp:'20 × 15 cm transplanted',s:[20,30,'kg (nursery)'],y:[2.5,3.5,'t']},
+'Beans / Soybeans':{sp:'50 × 10 cm, 3–4 cm deep',s:[20,25,'kg'],y:[8,12,'bags (90 kg)']},
+'Irish potato':{sp:'75 × 30 cm, 10 cm deep, ridges',s:[600,800,'kg tubers'],y:[8,14,'t']},
+Tomato:{sp:'60 × 45 cm, staked',s:[50,80,'g'],y:[15,30,'t'],f:[['Basal at planting','NPK 17:17:17 + organic manure',50,0],['Top-dress 1: 3 wks after transplant','CAN',30,21],['Top-dress 2: at fruiting','Potassium or calcium nitrate',40,null]]},
+Onion:{sp:'15 × 8 cm beds',s:[1,1.5,'kg'],y:[10,16,'t'],f:[['Basal at planting','DAP or NPK 11:29:22',50,0],['Top-dress 1: 3 wks after transplant','CAN',40,21],['Top-dress 2: bulb initiation (week 6)','High-K fertilizer',40,42]]}};
+let GEST={Cattle:283,'Goats/Sheep':150,Pigs:114};
+let LIB=[
+['Poultry','Newcastle disease','Signs: twisted neck, green watery diarrhoea, gasping; up to 100% deaths in unvaccinated flocks. No cure: give multivitamins and broad-spectrum antibiotics for secondary infection. Prevent with the vaccine schedule and strict quarantine.'],
+['Poultry','Coccidiosis','Signs: bloody mucoid droppings, ruffled feathers, anaemia, pale comb. Treat with amprolium 20% soluble powder (1 g per litre of water for 5 days) or diclazuril/toltrazuril. Keep litter moisture below 25% and avoid spills at waterers.'],
+['Poultry','Infectious coryza','Signs: facial swelling, foul nasal discharge, lower feed intake and egg yield. Treat with oxytetracycline or sulfamethoxazole-trimethoprim in water. Use all-in-all-out housing and keep ages apart.'],
+['Poultry','Brooding','Start at 32–34°C in week 1, then cut 2.5°C each week until room temperature (21°C) by week 4.'],
+['Poultry','Breeds','Broiler: Cobb 500, Ross 308, Hubbard (35–42 days). Layer: Isa Brown, Hy-Line Brown, Lohmann (18 to 72–80 wks). Kuroiler: Kuroiler, Sasso, Rainbow Rooster (meat 10–14 wks, eggs up to 68 wks).'],
+['Incubation','Setter, days 1–18','37.5–37.8°C, 50–55% RH. Turn 45° hourly; stop turning on day 18. Increase fresh air daily.'],
+['Incubation','Hatcher, days 19–21','36.8–37.2°C, 65–75% RH. No turning. High humidity softens shell membranes for pipping.'],
+['Incubation','Candling','Day 7: remove infertile (clear) eggs. Day 14: check for early and late embryo deaths.'],
+['Cattle','Breeding','First service at 15–18 months (min 250–280 kg). Heat cycle 21 days, heat lasts 12–18 hours. Inseminate about 12 hours after heat starts (AM/PM rule). Gestation 283 days.'],
+['Cattle','Feeding','Dry matter intake is 3% of body weight. Give 1 kg dairy concentrate per 1.5–2.0 litres of milk above a 5 kg base yield. Balance TMR with Rhodes grass hay, maize silage (32% DM) and lucerne.'],
+['Cattle','Foot & mouth (FMD)','Fever, blisters on tongue, gums, teats and hooves, lameness, ropy saliva. Vaccinate twice a year (quadrivalent); ring-vaccinate in outbreaks. Reportable disease.'],
+['Cattle','East Coast fever','Swollen lymph nodes by the ear, fever 40.5°C+, cloudy eyes, froth at nostrils. Prevent with Muguga cocktail infection-and-treatment. Treat with buparvaquone 2.5 mg/kg.'],
+['Cattle','Mastitis','Clots in milk, hot swollen udder quarter, SCC above 200,000 cells/ml. Intramammary tubes in lactation and dry-cow therapy; dip teats after milking.'],
+['Goats & sheep','Breeding','Gestation 147–152 days. Twinning target above 150%. Interval 8 months under intensive management.'],
+['Goats & sheep','PPR','Mouth ulcers, diarrhoea, pneumonia. Very contagious. Vaccinate yearly.'],
+['Goats & sheep','CCPP and worms','CCPP: severe breathing disease; treat with tylosin or oxytetracycline, vaccinate yearly. Worms: rotate pastures and deworm strategically using FAMACHA eye-colour scoring.'],
+['Pigs','Breeding','Gestation 114 days. Target over 11 born alive. Wean at 21–28 days; sows return to service 4–7 days later.'],
+['Pigs','Piglet care','Brooding 30–32°C in week 1. Iron dextran 200 mg on day 3. Tail docking, needle-teeth clipping and castration in week 1.'],
+['Pigs','Feeding stages','Creep (day 7 to 8 kg): 20–22% CP. Weaner to 25 kg: 18–20% CP, 0.8–1.2 kg/day. Grower 25–55 kg: 16–18%, 1.5–2.0 kg/day. Finisher 55 kg to market: 14–15%, 2.5–3.2 kg/day. Lactating sow: 16–17% CP, 2.0 kg + 0.5 kg per piglet.'],
+['Pigs','African swine fever (ASF)','High death rate. No vaccine or cure. Biosecurity: full perimeter fence, vehicle disinfection pit, 48-hour visitor quarantine, never feed unsterilised catering waste.'],
+['Crop pests','Fall armyworm (maize)','Ragged holes in whorl leaves, sawdust-like frass. Emamectin benzoate or chlorantraniliprole sprayed into whorls early morning; pheromone traps.'],
+['Crop pests','Late blight (tomato, potato)','Water-soaked leaf spots with white mould underneath; tuber rot. Prevent with copper oxychloride or mancozeb; cure with metalaxyl + mancozeb.'],
+['Crop pests','Tuta absoluta (tomato)','Blotch mines on leaves, pinholes in fruit. Sticky traps, flubendiamide or spinetoram; remove other Solanaceous hosts.'],
+['Crop pests','Bean aphids and thrips','Curled leaves, stunting, sooty mould, flower drop. Imidacloprid or acetamiprid; neem oil.']];
+
+const REF0=JSON.parse(JSON.stringify({VAC,ING,REC,NEED,CROPS,GEST,LIB}));
+function applyRef(){({VAC,ING,REC,NEED,CROPS,GEST,LIB}=Object.assign(JSON.parse(JSON.stringify(REF0)),S.ref||{}))}applyRef();
+/* ---------- Helpers ---------- */
+function bs(b){const age=dd(b.start,today())+1,dead=b.mort.reduce((a,m)=>a+m.n,0),w=b.wt.slice().sort((x,y)=>x.d<y.d?-1:1);let adg=null;
+ if(w.length>1){const n=dd(w[0].d,w[w.length-1].d);if(n>0)adg=(w[w.length-1].kg-w[0].kg)/n*1000}
+ return{age,dead,alive:b.count-dead,mp:dead/b.count*100,l:w[w.length-1],adg}}
+const inc=e=>e.t=='in',ferts=f=>((CROPS[f.crop]||{}).f||[]).map(s=>({s:s[0],p:s[1],kg:s[2]*f.ac,date:s[3]==null?null:addD(f.date,s[3])}));
+const stage=b=>{const s=SP[b.type].st;if(!s)return'';const a=dd(b.start,today())+1;return(s.find(x=>a<=x[0])||s[s.length-1])[1]};
+const when=n=>n<0?`${-n} d overdue`:n==0?'Today':`In ${n} d`;
+
+/* ---------- Tabs ---------- */
+function home(){
+ const act=S.batches.filter(b=>bs(b).alive>0),birds=act.reduce((a,b)=>a+bs(b).alive,0),ac=S.fields.reduce((a,f)=>a+f.ac,0),net=S.ledger.reduce((a,e)=>a+(inc(e)?e.a:-e.a),0),tk=[];
+ S.batches.forEach(b=>{if(!SP[b.type].p)return;vacs(b).forEach(v=>{if(b.vx[v[0]])return;const n=dd(today(),addD(b.start,v[0]-1));if(n<=7&&n>=-30)tk.push([n,`${esc(b.name)}: ${esc(v[1])}`,()=>`T='stock';B=${b.id};render()`,b.id])})});
+ S.fields.forEach(f=>ferts(f).forEach(s=>{if(!s.date)return;const n=dd(today(),s.date);if(n<=7&&n>=-3)tk.push([n,`${esc(f.name)}: ${esc(s.s)} (${fmt(s.kg)} kg)`,0,0])}));
+ tk.sort((a,b)=>a[0]-b[0]);
+ return`<div class="stats">${st('Active batches',act.length)}${st('Animals alive',birds)}${st('Acres planted',fmt(ac))}${st('Net cash',fmt(net))}</div>
+ <h2>Coming up</h2><div class="card">${tk.length?tk.map(t=>`<div class="row ${t[3]?'tap':''}" ${t[3]?`onclick="${t[2]()}"`:''}><span>${t[1]}</span><span class="tag ${t[0]<0?'b':t[0]<3?'w':''}">${when(t[0])}</span></div>`).join(''):'<p class="mut">Nothing due in the next 7 days. Add a batch in Stock or a field in Crops to see vaccine and fertilizer reminders here.</p>'}</div>
+ <details class="card"><summary>Backup and restore</summary><p class="mut">Data is stored on this device. Copy the text below to keep a backup, or paste a backup to restore.</p>
+ <textarea id="bk" readonly>${esc(JSON.stringify(S))}</textarea><div class="form" style="margin-top:8px"><button class="btn alt" onclick="navigator.clipboard.writeText($('#bk').value).then(()=>toast('Backup copied'),()=>toast('Select the text and copy it'))">Copy backup</button></div>
+ <textarea id="rs" placeholder="Paste backup here" style="margin-top:8px"></textarea><button class="btn" style="margin-top:8px" onclick="restore()">Restore backup</button></details>`}
+function restore(){try{const d=JSON.parse(g('rs'));if(!d.batches)throw 0;S=Object.assign({batches:[],fields:[],ledger:[],prices:{},hatch:[]},d);save();applyRef();toast('Backup restored');render()}catch(e){toast('That backup could not be read')}}
+
+function stock(){
+ if(B){const b=S.batches.find(x=>x.id==B);if(b)return batch(b)}
+ return`<h2>Batches and herds</h2>${S.batches.length?`<div class="card">${S.batches.map(b=>{const s=bs(b);return`<div class="row tap" onclick="B=${b.id};render()"><div><b>${esc(b.name)}</b><div class="mut">${b.type} · day ${s.age} · ${s.alive} alive</div></div><span class="tag ${s.mp>5?'b':''}">${fmt(s.mp)}% mortality</span></div>`}).join('')}</div>`:'<p class="mut">No batches yet. Add your first flock or herd below.</p>'}
+ <details class="card" ${S.batches.length?'':'open'}><summary>Add batch</summary><div class="form">${F('bn','Name','text','','placeholder="e.g. Broilers Oct"')}${SEL('bt','Type',Object.keys(SP),'Broiler')}${F('bc','Number of animals','number','','inputmode="numeric"')}${F('bs','Start date','date',today())}${F('bk','Purchase cost (total)','number','','inputmode="decimal"')}<button class="btn" onclick="addBatch()">Save batch</button></div></details>
+ <h2>Breeding due date</h2><div class="card"><div class="form">${SEL('gs','Species',Object.keys(GEST),'Cattle','onchange="gcalc()"')}${F('gd','Service date','date',today(),'onchange="gcalc()"')}</div><p id="gr" class="ok" style="font-weight:700;margin:10px 0 0"></p></div>
+ <h2>Egg incubation</h2><div class="card">${S.hatch.map(h=>`<div class="row"><div><b>${esc(h.name)}</b> <span class="mut">set ${h.d}</span><div class="mut">Candle ${addD(h.d,7)} · Candle ${addD(h.d,14)} · Stop turning, move to hatcher ${addD(h.d,18)} · Hatch ${addD(h.d,21)}</div></div><button class="btn del" onclick="S.hatch=S.hatch.filter(x=>x.id!=${h.id});save();render()">Remove</button></div>`).join('')}
+ <div class="form">${F('hn','Name','text','','placeholder="e.g. Tray 1"')}${F('hd','Set date','date',today())}<button class="btn alt" onclick="S.hatch.push({id:Date.now(),name:g('hn')||'Eggs',d:g('hd')});save();render()">Start tracking</button></div></div>
+ <script>setTimeout(gcalc,0)<\/script>`}
+function gcalc(){const e=$('#gr');if(!e)return;const s=g('gs'),d=g('gd'),n=GEST[s];e.textContent=`Due about ${addD(d,n)} (${n} days)`+(s=='Cattle'?`. If not pregnant, expect heat again around ${addD(d,21)}.`:s=='Goats/Sheep'?'. Range: '+addD(d,147)+' to '+addD(d,152)+'.':'.')}
+function addBatch(){const c=+g('bc');if(!c)return toast('Enter how many animals');S.batches.push({id:Date.now(),name:g('bn')||g('bt')+' batch',type:g('bt'),count:c,start:g('bs'),cost:+g('bk')||0,mort:[],wt:[],vx:{}});save();render()}
+function batch(b){const s=bs(b),sp=SP[b.type],v=sp.p?vacs(b):[],wk=Math.ceil(s.age/7);
+ return`<button class="link" onclick="B=null;render()">‹ All batches</button><h2>${esc(b.name)}</h2><p class="mut">${b.type}, started ${b.start}. Target: ${sp.tg}</p>
+ <div class="stats">${st('Age (days)',s.age)}${st('Alive',s.alive)}${st('Mortality',fmt(s.mp)+'%')}${st('Avg daily gain',s.adg==null?'–':fmt(s.adg)+' g')}</div>
+ ${sp.st?`<div class="card"><h3>Now: ${esc(stage(b))}</h3>${s.age<=28?`<p class="mut" style="margin:0">Brooding guide this week: ${Math.max(21,32-2.5*(wk-1))}–${Math.max(21,34-2.5*(wk-1))}°C</p>`:''}</div>`:''}
+ <div class="card"><h3>Log</h3><div class="form">${F('mn','Deaths','number','','inputmode="numeric"')}<button class="btn alt" onclick="logm(${b.id})">Add deaths today</button></div>
+ <div class="form" style="margin-top:8px">${F('wk','Average weight (kg)','number','','inputmode="decimal" step="0.01"')}<button class="btn alt" onclick="logw(${b.id})">Add weighing today</button></div>
+ ${s.l?`<p class="mut">Last weighing: ${s.l.kg} kg on ${s.l.d}</p>`:''}</div>
+ ${v.length?`<div class="card"><h3>Vaccine schedule</h3>${v.map(x=>{const due=addD(b.start,x[0]-1),n=dd(today(),due),done=b.vx[x[0]];return`<div class="row"><div><b>${esc(x[1])}</b><div class="mut">${esc(x[2])} · ${esc(x[3])}</div><div class="mut">${due}${done?'':' · '+when(n)}</div></div><input type="checkbox" aria-label="Mark done" ${done?'checked':''} onchange="vx(${b.id},${x[0]})"></div>`}).join('')}<p class="mut">Check withdrawal periods on drug labels before selling meat or eggs.</p></div>`:''}
+ <button class="btn del" onclick="if(confirm('Delete this batch?')){S.batches=S.batches.filter(x=>x.id!=${b.id});B=null;save();render()}">Delete batch</button>`}
+const logm=id=>{const n=+g('mn');if(!n)return;S.batches.find(b=>b.id==id).mort.push({d:today(),n});save();render()},
+logw=id=>{const k=+g('wk');if(!k)return;S.batches.find(b=>b.id==id).wt.push({d:today(),kg:k});save();render()},
+vx=(id,d)=>{const b=S.batches.find(x=>x.id==id);b.vx[d]=!b.vx[d];save();render()};
+
+function feed(){
+ if(!REC[FR])FR=Object.keys(REC)[0];const r=REC[FR],tot=r.reduce((a,b)=>a+b,0);let cost=0;
+ const rows=r.map((p,i)=>{const kg=p/100*FK,pr=+S.prices[ING[i]]||0;cost+=kg*pr;return`<tr><td>${ING[i]}</td><td>${p}%</td><td>${fmt(kg)}</td><td><input type="number" inputmode="decimal" style="min-height:36px;padding:4px;width:78px" value="${pr||''}" placeholder="price/kg" onchange="S.prices['${ING[i]}']=+this.value;save();render()"></td></tr>`}).join('');
+ const need=NEED.filter(n=>n[0]==FB);
+ return`<h2>Feed mix calculator</h2><div class="card"><div class="form">${SEL('fr','Feed',Object.keys(REC),FR,'onchange="FR=g(\'fr\');render()"')}${F('fk','Batch size (kg)','number',FK,'inputmode="decimal" onchange="FK=+g(\'fk\')||0;render()"')}</div>
+ <div class="sc"><table><tr><th>Ingredient</th><th>Share</th><th>kg</th><th>Price</th></tr>${rows}</table></div>
+ ${tot<100?`<p class="mut">The manual lists these shares as ${tot}%. The other ${fmt(100-tot)}% is not specified, so check the full formula with a nutritionist.</p>`:''}
+ ${cost?`<p class="ok" style="font-weight:700">Cost per kg: ${fmt(cost/FK)} · Batch cost: ${fmt(cost)}</p>`:'<p class="mut">Enter ingredient prices to see cost per kg.</p>'}</div>
+ <h2>How much feed will I need?</h2><div class="card"><div class="form">${SEL('fb','Bird type',['Broiler','Layer','Kuroiler'],FB,'onchange="FB=g(\'fb\');render()"')}${F('fn','Number of birds','number',FN,'inputmode="numeric" onchange="FN=+g(\'fn\')||0;render()"')}</div>
+ <div class="sc"><table><tr><th>Stage</th><th>Per bird (kg)</th><th>Whole flock (kg)</th></tr>${need.map(n=>`<tr><td>${n[1]}</td><td>${n[2]==n[3]?n[2]:n[2]+'–'+n[3]}</td><td>${n[2]==n[3]?fmt(n[2]*FN):fmt(n[2]*FN)+'–'+fmt(n[3]*FN)}</td></tr>`).join('')}</table></div></div>`}
+
+function crops(){
+ if(!CROPS[CR])CR=Object.keys(CROPS)[0];const c=CROPS[CR],a=CA||0,fr=(c.f||[]);
+ return`<h2>Crop planner</h2><div class="card"><div class="form">${SEL('cr','Crop',Object.keys(CROPS),CR,'onchange="CR=g(\'cr\');render()"')}${F('ca','Acres','number',CA,'inputmode="decimal" onchange="CA=+g(\'ca\')||0;render()"')}</div>
+ <div class="row"><span>Spacing</span><b>${c.sp}</b></div><div class="row"><span>Seed needed</span><b>${fmt(c.s[0]*a)}–${fmt(c.s[1]*a)} ${c.s[2]}</b></div><div class="row"><span>Expected yield</span><b>${fmt(c.y[0]*a)}–${fmt(c.y[1]*a)} ${c.y[2]}</b></div>
+ ${fr.map(s=>`<div class="row"><div>${s[0]}<div class="mut">${s[1]}</div></div><b>${fmt(s[2]*a)} kg</b></div>`).join('')||'<p class="mut">No fertilizer schedule listed for this crop in the manual.</p>'}</div>
+ <h2>My fields</h2>${S.fields.map(f=>`<div class="card"><div class="row" style="padding-top:0"><div><b>${esc(f.name)}</b><div class="mut">${f.crop}, ${f.ac} acres, planted ${f.date}</div></div><button class="btn del" onclick="if(confirm('Delete field?')){S.fields=S.fields.filter(x=>x.id!=${f.id});save();render()}">Delete</button></div>
+ ${ferts(f).map(s=>`<div class="row"><div>${esc(s.s)}<div class="mut">${esc(s.p)}, ${fmt(s.kg)} kg</div></div><span class="tag ${s.date&&dd(today(),s.date)<0?'b':''}">${s.date?s.date:'at fruiting'}</span></div>`).join('')}${f.crop=='Maize'?'<p class="mut">Top-dress dates are estimates (V6 about day 28, tasseling about day 56).</p>':''}</div>`).join('')}
+ <details class="card" ${S.fields.length?'':'open'}><summary>Add field</summary><div class="form">${F('fname','Field name','text','','placeholder="e.g. North plot"')}${SEL('fc','Crop',Object.keys(CROPS),CR)}${F('fa','Acres','number','','inputmode="decimal"')}${F('fd','Planting date','date',today())}<button class="btn" onclick="addField()">Save field</button></div></details>`}
+function addField(){const a=+g('fa');if(!a)return toast('Enter the acres');S.fields.push({id:Date.now(),name:g('fname')||'Field',crop:g('fc'),ac:a,date:g('fd')});save();render()}
+
+const CATS=['Sale: animals or meat','Sale: eggs','Sale: milk','Sale: crops','Other income','Feed','Stock purchase','Vaccines & drugs','Labour','Seed & fertilizer','Other expense'];
+function money(){
+ const iT=S.ledger.filter(inc).reduce((a,e)=>a+e.a,0),eT=S.ledger.filter(e=>!inc(e)).reduce((a,e)=>a+e.a,0);
+ const per=S.batches.map(b=>{const L=S.ledger.filter(e=>e.b==b.id),i=L.filter(inc).reduce((a,e)=>a+e.a,0),x=L.filter(e=>!inc(e)).reduce((a,e)=>a+e.a,0)+(b.cost||0),s=bs(b);return{b,i,x,net:i-x,be:s.alive?x/s.alive:null}});
+ return`<h2>Money</h2><div class="stats">${st('Income',fmt(iT))}${st('Expenses',fmt(eT))}${st('Net',`<span class="${iT-eT<0?'bad':'ok'}">${fmt(iT-eT)}</span>`)}</div>
+ <div class="card"><h3>Add entry</h3><div class="form">${F('ed','Date','date',today())}${SEL('ec','Category',CATS,'Feed')}${F('ea','Amount','number','','inputmode="decimal"')}<label>Batch<select id="eb"><option value="">None</option>${S.batches.map(b=>`<option value="${b.id}">${esc(b.name)}</option>`).join('')}</select></label>${F('en','Note','text')}<button class="btn" onclick="addE()">Save entry</button></div></div>
+ ${per.length?`<h2>Profit per batch</h2><div class="card">${per.map(p=>`<div class="row"><div><b>${esc(p.b.name)}</b><div class="mut">Income ${fmt(p.i)} · Costs ${fmt(p.x)}${p.be!=null?` · Break-even ${fmt(p.be)} per animal`:''}</div></div><b class="${p.net<0?'bad':'ok'}">${fmt(p.net)}</b></div>`).join('')}<p class="mut">Costs include the purchase cost entered when the batch was added.</p></div>`:''}
+ <h2>Recent entries</h2><div class="card">${S.ledger.slice(-15).reverse().map(e=>`<div class="row"><div>${esc(e.c)}<div class="mut">${e.d}${e.n?' · '+esc(e.n):''}</div></div><div><b class="${inc(e)?'ok':'bad'}">${inc(e)?'+':'−'}${fmt(e.a)}</b> <button class="link" aria-label="Delete entry" onclick="S.ledger=S.ledger.filter(x=>x.id!=${e.id});save();render()">✕</button></div></div>`).join('')||'<p class="mut">No entries yet.</p>'}</div>`}
+function addE(){const a=+g('ea');if(!a)return toast('Enter an amount');const c=g('ec');S.ledger.push({id:Date.now(),d:g('ed'),c,a,t:/^(Sale|Other income)/.test(c)?'in':'out',b:g('eb'),n:g('en')});save();render()}
+
+function learn(){
+ const cats=['All',...new Set(LIB.map(x=>x[0]))],q=Q.toLowerCase(),L=LIB.filter(x=>(LC=='All'||x[0]==LC)&&(x[1]+x[2]).toLowerCase().includes(q));
+ return`<h2>Knowledge library</h2><input id="q" type="search" placeholder="Search diseases, feeds, breeding…" value="${esc(Q)}" oninput="Q=this.value;learnList()">
+ <div class="chips">${cats.map(c=>`<button class="${c==LC?'on':''}" onclick="LC='${c}';render()">${c}</button>`).join('')}</div><div id="ll">${libHtml(L)}</div>
+ ${refEd()}<p class="mut">Reference data comes from the Farm App Core Knowledge Base (KB-AGRI-2026-V1). Confirm treatments and doses with a vet.</p>`}
+const libHtml=L=>L.map(x=>`<div class="card"><span class="tag">${x[0]}</span><h3 style="margin-top:6px">${x[1]}</h3><p style="margin:0">${x[2]}</p></div>`).join('')||'<p class="mut">No matches. Try a different word.</p>';
+const learnList=()=>{const q=Q.toLowerCase();$('#ll').innerHTML=libHtml(LIB.filter(x=>(LC=='All'||x[0]==LC)&&(x[1]+x[2]).toLowerCase().includes(q)))};
+
+let ES='VAC';
+const ejson=()=>JSON.stringify({VAC,ING,REC,NEED,CROPS,GEST,LIB}[ES],null,1);
+const refEd=()=>`<details class="card"><summary>Edit reference data</summary><p class="mut">Change vaccine schedules, feed mixes, crop figures, gestation days and library notes. Changes stay on this device and are included in backups.</p>${SEL('es','Section',Object.keys(REF0),ES,'onchange="ES=g(\'es\');$(\'#ej\').value=ejson()"')}<textarea id="ej" style="min-height:240px;font-family:ui-monospace,monospace" spellcheck="false">${esc(ejson())}</textarea><div class="form" style="margin-top:8px"><button class="btn" onclick="saveRef()">Save changes</button><button class="btn del" onclick="resetRef()">Reset section</button></div></details>`;
+function saveRef(){try{const v=JSON.parse(g('ej')),bad=m=>{throw m};
+ if(typeof v!=typeof REF0[ES]||Array.isArray(v)!=Array.isArray(REF0[ES]))bad('This section must keep its original shape.');
+ if(ES=='REC'&&Object.values(v).some(a=>!Array.isArray(a)||a.length!=ING.length))bad('Each feed mix needs one number per ingredient ('+ING.length+').');
+ if(ES=='ING'&&Object.values(REC).some(a=>a.length!=v.length))bad('Ingredient count must match the feed mixes. Edit both together.');
+ (S.ref=S.ref||{})[ES]=v;save();applyRef();toast('Saved');render()}catch(e){toast(typeof e=='string'?e:'Not valid. Check commas and quotes.')}}
+function resetRef(){if(S.ref)delete S.ref[ES];save();applyRef();toast('Reset to built-in data');render()}
+/* ---------- Shell ---------- */
+const go=k=>{T=k;B=null;scrollTo(0,0);render()};
+function render(){$('#nav').innerHTML=TABS.map(([k,l])=>`<button class="${k==T?'on':''}" aria-label="${l}" onclick="go('${k}')">${ic(k)}<span>${l}</span></button>`).join('');
+ $('#main').innerHTML=({home,stock,feed,crops,money,learn})[T]();if(T=='stock'&&!B)gcalc()}
+function theme(){const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;d.dataset.theme=dark?'light':'dark';try{localStorage.setItem('farmdesk_theme',d.dataset.theme)}catch(e){}}
+try{const t=localStorage.getItem('farmdesk_theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+$('#dt').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e;$('#ib').hidden=false});
+addEventListener('appinstalled',()=>{$('#ib').hidden=true;toast('FarmDesk installed')});
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+render();
+</script></body></html>
